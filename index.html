@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast Application</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-blue-50 font-sans leading-normal tracking-normal">
+  
+  <!-- Container -->
+  <div class="max-w-4xl mx-auto py-10 px-5">
+    
+    <!-- Application Header -->
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-blue-800">Weather Forecast Application</h1>
+      <p class="text-gray-700 mt-2">Get the latest weather updates for your location and more!</p>
+    </header>
+    
+    <!-- Search and Location -->
+    <section class="mb-8">
+      <div class="flex justify-center">
+        <!-- City Search Input -->
+        <input 
+          type="text" 
+          id="city-input" 
+          placeholder="Enter city name" 
+          class="p-3 w-64 border rounded-l-md focus:outline-none focus:ring focus:border-blue-300"
+        />
+        <!-- Search Button -->
+        <button 
+          id="search-btn" 
+          class="p-3 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 focus:outline-none"
+        >
+          Search
+        </button>
+      </div>
+      
+      <!-- Error Message -->
+      <div id="error-message" class="hidden mt-4 text-center text-red-700 bg-red-100 p-4 rounded"></div>
+    </section>
+    
+    <!-- Recent Searches Dropdown -->
+    <section class="mb-8 text-center">
+      <div id="recent-searches" class="relative inline-block">
+        <!-- Dropdown Button (appears only after first search) -->
+        <button 
+          id="recent-btn" 
+          class="hidden px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 focus:outline-none"
+        >
+          Recently Searched Cities
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div id="dropdown-menu" class="hidden absolute bg-white border rounded shadow-lg mt-1 w-full">
+          <!-- Dropdown items will be dynamically added here -->
+        </div>
+      </div>
+    </section>
+    
+    <!-- Current Weather Display -->
+    <section id="current-weather" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+      <h2 class="text-2xl font-semibold text-blue-800 text-center mb-4">Current Weather</h2>
+      
+      <!-- Weather Details -->
+      <div class="text-center">
+        <img id="weather-icon" src="" alt="Weather Icon" class="mx-auto mb-2">
+        <p id="weather-description" class="text-lg font-medium text-gray-700"></p>
+        <p id="temperature" class="text-3xl font-bold text-blue-800"></p>
+        <p id="wind-speed" class="text-sm text-gray-600"></p>
+        <p id="humidity" class="text-sm text-gray-600"></p>
+      </div>
+    </section>
+    
+    <!-- Extended Forecast Display -->
+    <section id="extended-forecast" class="hidden">
+      <h2 class="text-2xl font-semibold text-blue-800 text-center mb-4">5-Day Forecast</h2>
+      
+      <!-- Forecast Cards Container -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Forecast cards will be dynamically inserted here -->
+      </div>
+    </section>
+  
+  </div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
