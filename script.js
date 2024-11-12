@@ -14,29 +14,52 @@ const recentSearchesDropdown = document.getElementById('recent-btn');
 const dropdownMenu = document.getElementById('dropdown-menu');
 const extendedForecastSection = document.getElementById('extended-forecast');
 
+// Show loading indicator (you can add a loading spinner in your HTML/CSS)
+function showLoading(isLoading) {
+  searchBtn.textContent = isLoading ? 'Loading...' : 'Search';
+  searchBtn.disabled = isLoading;
+}
+
 // Fetch weather data by city name
 async function getWeatherData(city) {
+  showLoading(true);
   try {
-    // Fetch current weather
     const weatherResponse = await fetch(`${baseUrl}weather?q=${city}&appid=${apiKey}&units=metric`);
     if (!weatherResponse.ok) throw new Error('City not found');
 
     const weatherData = await weatherResponse.json();
-
-    // Fetch extended forecast
     const forecastResponse = await fetch(`${baseUrl}forecast?q=${city}&appid=${apiKey}&units=metric`);
     if (!forecastResponse.ok) throw new Error('Unable to fetch extended forecast');
 
     const forecastData = await forecastResponse.json();
-
-    // Display data
     displayCurrentWeather(weatherData);
     displayExtendedForecast(forecastData);
-
-    // Manage recent searches
     updateRecentSearches(city);
   } catch (error) {
     displayErrorMessage(error.message);
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Fetch weather data by geolocation (for current location)
+async function getWeatherDataByLocation(lat, lon) {
+  showLoading(true);
+  try {
+    const weatherResponse = await fetch(`${baseUrl}weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+    if (!weatherResponse.ok) throw new Error('Unable to fetch weather data for your location');
+
+    const weatherData = await weatherResponse.json();
+    const forecastResponse = await fetch(`${baseUrl}forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+    if (!forecastResponse.ok) throw new Error('Unable to fetch extended forecast');
+
+    const forecastData = await forecastResponse.json();
+    displayCurrentWeather(weatherData);
+    displayExtendedForecast(forecastData);
+  } catch (error) {
+    displayErrorMessage(error.message);
+  } finally {
+    showLoading(false);
   }
 }
 
@@ -54,9 +77,8 @@ function displayCurrentWeather(data) {
 function displayExtendedForecast(data) {
   extendedForecastSection.classList.remove('hidden');
   const forecastContainer = extendedForecastSection.querySelector('.grid');
-  forecastContainer.innerHTML = '';  // Clear previous forecast data
+  forecastContainer.innerHTML = '';
 
-  // Filter to get daily forecast at the same time (e.g., 12:00)
   const dailyForecasts = data.list.filter(item => item.dt_txt.includes('12:00:00'));
 
   dailyForecasts.forEach(day => {
@@ -82,8 +104,8 @@ function displayExtendedForecast(data) {
 // Manage recent searches dropdown
 function updateRecentSearches(city) {
   if (!recentCities.includes(city)) {
-    recentCities.unshift(city); // Add city to the start
-    if (recentCities.length > 5) recentCities.pop(); // Keep only the latest 5 cities
+    recentCities.unshift(city);
+    if (recentCities.length > 5) recentCities.pop();
     localStorage.setItem('recentCities', JSON.stringify(recentCities));
   }
   renderRecentSearches();
@@ -103,8 +125,6 @@ function renderRecentSearches() {
 function displayErrorMessage(message) {
   errorMessage.textContent = message;
   errorMessage.classList.remove('hidden');
-
-  // Hide error after a few seconds
   setTimeout(() => errorMessage.classList.add('hidden'), 5000);
 }
 
@@ -118,19 +138,36 @@ function validateInput() {
   return true;
 }
 
+// Close dropdown when clicking outside
+document.addEventListener('click', (event) => {
+  if (!recentSearchesDropdown.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.add('hidden');
+  }
+});
+
 // Event listener for search button
 searchBtn.addEventListener('click', () => {
   if (validateInput()) {
     const city = cityInput.value.trim();
     getWeatherData(city);
-    cityInput.value = '';  // Clear input field
+    cityInput.value = '';
   }
 });
 
 // Event listener for recent searches dropdown
 recentSearchesDropdown.addEventListener('click', () => {
-  dropdownMenu.classList.toggle('hidden');  // Toggle visibility
+  dropdownMenu.classList.toggle('hidden');
 });
 
 // Initial load of recent searches
 renderRecentSearches();
+
+// Get user's current location
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    getWeatherDataByLocation(lat, lon);
+  },
+  (error) => displayErrorMessage("Location access denied or unavailable")
+);

@@ -27,12 +27,12 @@
           placeholder="Enter city name" 
           class="p-3 w-64 border rounded-l-md focus:outline-none focus:ring focus:border-blue-300"
         />
-        <!-- Search Button -->
+        <!-- Search Button with Loading Indicator -->
         <button 
           id="search-btn" 
           class="p-3 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 focus:outline-none"
         >
-          Search
+          <span>Search</span>
         </button>
       </div>
       
@@ -52,7 +52,7 @@
         </button>
         
         <!-- Dropdown Menu -->
-        <div id="dropdown-menu" class="hidden absolute bg-white border rounded shadow-lg mt-1 w-full">
+        <div id="dropdown-menu" class="hidden absolute bg-white border rounded shadow-lg mt-1 w-full z-10">
           <!-- Dropdown items will be dynamically added here -->
         </div>
       </div>
